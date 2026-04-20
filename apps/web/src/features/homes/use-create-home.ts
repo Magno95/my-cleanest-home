@@ -7,11 +7,10 @@ interface CreateHomeInput {
   name: string;
 }
 
-async function createHome({ name }: CreateHomeInput): Promise<void> {
-  const { data: home, error } = await supabase.from('homes').insert({ name }).select('id').single();
-
+export async function createHome({ name }: CreateHomeInput): Promise<void> {
+  const { data: homeId, error } = await supabase.rpc('create_home', { name });
   if (error) throw error;
-  await ensureMiscellaneousRoom(home.id);
+  await ensureMiscellaneousRoom(homeId);
 }
 
 export function useCreateHome() {
