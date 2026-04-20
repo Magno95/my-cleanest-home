@@ -351,6 +351,7 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
+      create_home: { Args: { name: string }; Returns: string };
       current_user_id: { Args: never; Returns: string };
       is_home_member: { Args: { target_home_id: string }; Returns: boolean };
       is_home_owner: { Args: { target_home_id: string }; Returns: boolean };
