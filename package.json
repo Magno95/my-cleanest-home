@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "description": "Household cleaning management monorepo (web + cms + api)",
+  "description": "Household cleaning management monorepo (web + api)",
   "packageManager": "pnpm@9.0.5",
   "engines": {
     "node": ">=20"

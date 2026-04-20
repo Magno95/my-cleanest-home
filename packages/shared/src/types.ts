@@ -59,8 +59,6 @@ export interface Item {
   id: UUID;
   areaId: UUID;
   name: string;
-  /** Link to a shared cleaning instruction catalogued in the CMS. */
-  instructionId: UUID | null;
 }
 
 export interface CleaningCycle {
@@ -88,7 +86,7 @@ export interface Assignment {
   userId: UUID;
 }
 
-/** Managed centrally in the CMS. */
+/** Managed directly in the web app. */
 export interface Product {
   id: UUID;
   name: string;
@@ -96,17 +94,9 @@ export interface Product {
   description: string | null;
 }
 
-/** Managed centrally in the CMS. */
+/** Managed directly in the web app. */
 export interface Tool {
   id: UUID;
   name: string;
   description: string | null;
-}
-
-export interface Instruction {
-  id: UUID;
-  title: string;
-  body: string;
-  productIds: UUID[];
-  toolIds: UUID[];
 }

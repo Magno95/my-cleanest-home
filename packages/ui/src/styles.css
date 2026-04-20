@@ -5,8 +5,8 @@
 /**
  * Design tokens (Airbnb-inspired).
  *
- * Palette & treatments mirror the `design` skill: pure white canvas, Rausch
- * Red accent, warm near-black text (#222), three-layer card shadow, generous
+ * Palette & treatments mirror the `design` skill: pure white canvas, aqua
+ * green accent, warm near-black text (#222), three-layer card shadow, generous
  * radii, and Cereal VF with system fallbacks.
  *
  * Colours are stored as HSL triplets so Tailwind utilities can compose opacity:
@@ -33,10 +33,10 @@
     --border-strong: 0 0% 76%; /* #c1c1c1  stronger card edge */
     --ring: 0 0% 13%; /* focus ring matches foreground */
 
-    /* Brand (Rausch) */
-    --brand: 349 100% 61%; /* #ff385c  Rausch Red */
+    /* Brand (Aqua green) */
+    --brand: 173 61% 47%; /* #2fc1b4  aqua green */
     --brand-foreground: 0 0% 100%;
-    --brand-active: 346 91% 46%; /* #e00b41  Deep Rausch (pressed) */
+    --brand-active: 173 67% 36%; /* #1e998f  deeper aqua (pressed) */
 
     /* Semantic */
     --error: 13 80% 42%; /* #c13515 */

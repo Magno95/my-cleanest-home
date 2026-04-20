@@ -1,8 +1,15 @@
 import * as React from 'react';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
+import gsap from 'gsap';
 import { X } from 'lucide-react';
 import { cn } from '../lib/cn.js';
 
+/**
+ * Sheet primitives wrap Radix Dialog and animate the enter transition with
+ * GSAP. Radix controls mount/unmount so closed sheets never leave stray
+ * overlays blocking pointer events. Default side is `left`, but bottom sheets
+ * are supported for mobile/full-width detail surfaces.
+ */
 export const Sheet = DialogPrimitive.Root;
 export const SheetTrigger = DialogPrimitive.Trigger;
 export const SheetClose = DialogPrimitive.Close;
@@ -11,9 +18,27 @@ const SheetOverlay = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Overlay>,
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Overlay>
 >(function SheetOverlay({ className, ...props }, ref) {
+  const localRef = React.useRef<HTMLDivElement | null>(null);
+  const setRef = React.useCallback(
+    (node: HTMLDivElement | null) => {
+      localRef.current = node;
+      if (typeof ref === 'function') ref(node);
+      else if (ref) (ref as React.MutableRefObject<HTMLDivElement | null>).current = node;
+    },
+    [ref],
+  );
+  React.useLayoutEffect(() => {
+    if (localRef.current) {
+      gsap.fromTo(
+        localRef.current,
+        { autoAlpha: 0 },
+        { autoAlpha: 1, duration: 0.22, ease: 'power2.out' },
+      );
+    }
+  }, []);
   return (
     <DialogPrimitive.Overlay
-      ref={ref}
+      ref={setRef}
       className={cn('fixed inset-0 z-50 bg-foreground/40 backdrop-blur-sm', className)}
       {...props}
     />
@@ -23,24 +48,58 @@ const SheetOverlay = React.forwardRef<
 export interface SheetContentProps extends React.ComponentPropsWithoutRef<
   typeof DialogPrimitive.Content
 > {
-  side?: 'right' | 'left';
+  side?: 'right' | 'left' | 'bottom';
 }
 
 export const SheetContent = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Content>,
   SheetContentProps
->(function SheetContent({ className, children, side = 'right', ...props }, ref) {
-  const edge = side === 'right' ? 'right-0 border-l' : 'left-0 border-r';
+>(function SheetContent({ className, children, side = 'left', ...props }, forwardedRef) {
+  const contentRef = React.useRef<HTMLDivElement | null>(null);
+
+  const setContentRef = React.useCallback(
+    (node: HTMLDivElement | null) => {
+      contentRef.current = node;
+      if (typeof forwardedRef === 'function') forwardedRef(node);
+      else if (forwardedRef)
+        (forwardedRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
+    },
+    [forwardedRef],
+  );
+
+  const layoutClass =
+    side === 'bottom'
+      ? 'fixed bottom-0 left-0 right-0 z-50 flex w-full flex-col gap-4 border-t border-border bg-background shadow-card will-change-transform'
+      : cn(
+          'fixed top-0 z-50 flex h-full w-full max-w-md flex-col gap-4 border-border bg-background p-6 shadow-card will-change-transform',
+          side === 'right' ? 'right-0 border-l' : 'left-0 border-r',
+        );
+
+  React.useLayoutEffect(() => {
+    if (!contentRef.current) return;
+
+    if (side === 'bottom') {
+      gsap.fromTo(
+        contentRef.current,
+        { autoAlpha: 0, y: '100%' },
+        { autoAlpha: 1, y: '0%', duration: 0.38, ease: 'power3.out' },
+      );
+      return;
+    }
+
+    gsap.fromTo(
+      contentRef.current,
+      { autoAlpha: 0, x: side === 'right' ? '100%' : '-100%' },
+      { autoAlpha: 1, x: '0%', duration: 0.35, ease: 'power3.out' },
+    );
+  }, [side]);
+
   return (
     <DialogPrimitive.Portal>
       <SheetOverlay />
       <DialogPrimitive.Content
-        ref={ref}
-        className={cn(
-          'fixed top-0 z-50 flex h-full w-full max-w-md flex-col gap-4 border-border bg-background p-6 shadow-card',
-          edge,
-          className,
-        )}
+        ref={setContentRef}
+        className={cn(layoutClass, className)}
         {...props}
       >
         {children}

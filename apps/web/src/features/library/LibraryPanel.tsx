@@ -19,6 +19,7 @@ import { Field } from '../../components/field.js';
 import type { HomeSummary } from '../homes/use-homes.js';
 import { useRooms, type RoomSummary } from '../rooms/use-rooms.js';
 import { useCreateRoom } from '../rooms/use-create-room.js';
+import { MISCELLANEOUS_ROOM_NAME } from '../rooms/miscellaneous-room.js';
 import { useItems, type ItemSummary } from '../items/use-items.js';
 import { useCreateItem } from '../items/use-create-item.js';
 
@@ -41,17 +42,21 @@ export function LibraryPanel({ home, open, onOpenChange }: LibraryPanelProps) {
 
   const rooms = roomsQuery.data ?? [];
   const items = itemsQuery.data;
+  const miscellaneousRoom = useMemo(
+    () => rooms.find((room) => room.name === MISCELLANEOUS_ROOM_NAME) ?? null,
+    [rooms],
+  );
 
   const itemsByRoom = useMemo(() => {
     const map = new Map<string | null, ItemSummary[]>();
     for (const it of items ?? []) {
-      const key = it.roomId ?? null;
+      const key = it.roomId ?? miscellaneousRoom?.id ?? null;
       const bucket = map.get(key) ?? [];
       bucket.push(it);
       map.set(key, bucket);
     }
     return map;
-  }, [items]);
+  }, [items, miscellaneousRoom?.id]);
 
   const itemCount = items?.length ?? 0;
 
@@ -59,7 +64,7 @@ export function LibraryPanel({ home, open, onOpenChange }: LibraryPanelProps) {
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent className="gap-0 overflow-y-auto">
+      <SheetContent className="max-w-xl gap-0 overflow-y-auto">
         <SheetHeader>
           <SheetTitle>Library</SheetTitle>
           <SheetDescription>Rooms and cleaning items for {home.name}.</SheetDescription>
@@ -107,15 +112,13 @@ export function LibraryPanel({ home, open, onOpenChange }: LibraryPanelProps) {
                 </p>
               ) : (
                 <div className="flex flex-col gap-4">
-                  {[...rooms, null].map((room) => {
-                    const key = room?.id ?? null;
+                  {rooms.map((room) => {
+                    const key = room.id;
                     const group = itemsByRoom.get(key) ?? [];
                     if (group.length === 0) return null;
                     return (
-                      <div key={key ?? 'unassigned'} className="flex flex-col gap-1.5">
-                        <h4 className="text-xs font-medium text-foreground-muted">
-                          {room?.name ?? 'Unassigned'}
-                        </h4>
+                      <div key={key} className="flex flex-col gap-1.5">
+                        <h4 className="text-xs font-medium text-foreground-muted">{room.name}</h4>
                         <ul className="flex flex-col gap-1">
                           {group.map((item) => (
                             <li
@@ -193,6 +196,9 @@ export function LibraryPanel({ home, open, onOpenChange }: LibraryPanelProps) {
 const createItemSchema = z.object({
   name: z.string().trim().min(1, 'Name is required').max(120, 'Must be at most 120 characters'),
   roomId: z.string().optional().nullable(),
+  firstCleaningDate: z.string().trim().min(1, 'First cleaning day is required'),
+  frequencyValue: z.coerce.number().int().min(1, 'Frequency is required'),
+  frequencyUnit: z.enum(['day', 'week', 'month', 'year']),
 });
 type CreateItemValues = z.infer<typeof createItemSchema>;
 
@@ -213,7 +219,13 @@ function CreateItemForm({
     formState: { errors, isSubmitting },
   } = useForm<CreateItemValues>({
     resolver: zodResolver(createItemSchema),
-    defaultValues: { name: '', roomId: '' },
+    defaultValues: {
+      name: '',
+      roomId: '',
+      firstCleaningDate: new Date().toISOString().slice(0, 10),
+      frequencyValue: 1,
+      frequencyUnit: 'week',
+    },
   });
 
   const onSubmit = handleSubmit(async (values) => {
@@ -221,6 +233,9 @@ function CreateItemForm({
       await createItem.mutateAsync({
         name: values.name,
         roomId: values.roomId ? values.roomId : null,
+        firstCleaningDate: new Date(`${values.firstCleaningDate}T12:00:00`).toISOString(),
+        frequencyValue: values.frequencyValue,
+        frequencyUnit: values.frequencyUnit,
       });
       toast.success(`"${values.name}" added`);
       reset();
@@ -252,7 +267,7 @@ function CreateItemForm({
           )}
           {...register('roomId')}
         >
-          <option value="">Unassigned</option>
+          <option value="">{MISCELLANEOUS_ROOM_NAME}</option>
           {rooms.map((r) => (
             <option key={r.id} value={r.id}>
               {r.name}
@@ -260,6 +275,44 @@ function CreateItemForm({
           ))}
         </select>
       </Field>
+      <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_112px_132px]">
+        <Field
+          id="item-first-cleaning-date"
+          label="First cleaning day"
+          error={errors.firstCleaningDate?.message}
+        >
+          <Input
+            id="item-first-cleaning-date"
+            type="date"
+            aria-invalid={errors.firstCleaningDate ? 'true' : 'false'}
+            {...register('firstCleaningDate')}
+          />
+        </Field>
+        <Field id="item-frequency-value" label="Every" error={errors.frequencyValue?.message}>
+          <Input
+            id="item-frequency-value"
+            type="number"
+            min={1}
+            aria-invalid={errors.frequencyValue ? 'true' : 'false'}
+            {...register('frequencyValue', { valueAsNumber: true })}
+          />
+        </Field>
+        <Field id="item-frequency-unit" label="Unit" error={errors.frequencyUnit?.message}>
+          <select
+            id="item-frequency-unit"
+            className={cn(
+              'flex h-10 w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground',
+              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+            )}
+            {...register('frequencyUnit')}
+          >
+            <option value="day">Day</option>
+            <option value="week">Week</option>
+            <option value="month">Month</option>
+            <option value="year">Year</option>
+          </select>
+        </Field>
+      </div>
       <Button type="submit" variant="brand" disabled={busy}>
         {busy ? 'Adding…' : 'Add item'}
       </Button>

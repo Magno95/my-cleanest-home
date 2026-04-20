@@ -40,12 +40,12 @@ export function ProfilePage() {
   const [showCreate, setShowCreate] = useState(false);
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="mx-auto flex w-full max-w-5xl flex-col gap-8">
       <header className="flex flex-col gap-2">
         <h1 className="text-2xl font-bold tracking-tighter text-foreground">Profile</h1>
         <p className="text-sm text-foreground-muted">
           Signed in as <span className="text-foreground">{user?.email}</span>. Manage your homes
-          below.
+          below. Room colors and demo tools now live in Settings.
         </p>
       </header>
 

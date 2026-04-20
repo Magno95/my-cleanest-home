@@ -59,7 +59,7 @@ export function RoomsList({ homeId }: { homeId: string }) {
         <div>
           <h2 className="text-xl font-bold tracking-tight text-foreground">Rooms</h2>
           <p className="text-sm text-foreground-muted">
-            Add a room to start organising areas and tasks inside it.
+            Add a room to start organising items and cleaning tasks inside it.
           </p>
         </div>
         {!showCreate ? (
@@ -118,7 +118,7 @@ function EmptyState({ onCreate }: { onCreate: () => void }) {
         <div className="flex flex-col gap-1">
           <CardTitle>No rooms yet</CardTitle>
           <CardDescription>
-            Add your first room to start tracking areas and cleaning tasks.
+            Add your first room to start tracking items and cleaning tasks.
           </CardDescription>
         </div>
         <Button variant="brand" onClick={onCreate}>
@@ -159,7 +159,7 @@ function CreateRoomForm({ homeId, onDone }: { homeId: string; onDone: () => void
     <Card>
       <CardHeader>
         <CardTitle>Create a new room</CardTitle>
-        <CardDescription>Rooms group areas and cleaning tasks inside a home.</CardDescription>
+        <CardDescription>Rooms group items and cleaning tasks inside a home.</CardDescription>
       </CardHeader>
       <CardContent>
         <form className="flex flex-col gap-4" onSubmit={onSubmit} noValidate>

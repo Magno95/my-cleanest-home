@@ -1,7 +1,7 @@
 -- User-facing schema pivot:
 --   * user_profiles stores the "active home" per user, syncing across devices.
 --   * items flatten from (area -> room -> home) to (home + optional room).
---     areas remain in the schema for catalogue/instruction joins but are no
+--     areas remain in the schema for legacy compatibility but are no
 --     longer surfaced in the app UI.
 --
 -- All item-related RLS is simplified to check `items.home_id` directly via

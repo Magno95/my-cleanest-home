@@ -5,9 +5,9 @@
 --   * created_at/updated_at timestamps on every "entity" table.
 --   * Row-Level Security is ON for every home-scoped table. Access is derived
 --     from membership in home_members.
---   * Catalogue tables (products, tools, instructions) are readable by any
+--   * Reference-data tables (products, tools, instructions) are readable by any
 --     authenticated user. Write policies are intentionally NOT added here;
---     the CMS will run under the service role until an admin role is modelled.
+--     admin management can be modelled separately later.
 
 set check_function_bodies = off;
 
@@ -100,7 +100,7 @@ create table public.areas (
 create index areas_room_id_idx on public.areas(room_id);
 
 ------------------------------------------------------------------------------
--- Catalogue (managed centrally by the CMS)
+-- Reference data
 ------------------------------------------------------------------------------
 
 create table public.products (
@@ -379,9 +379,8 @@ create policy "tasks: members write" on public.tasks
     )
   );
 
--- Catalogue: readable by any authenticated user. Writes intentionally denied
--- (service role bypasses RLS; the CMS will run under it until an admin role
--- is modelled).
+-- Reference data: readable by any authenticated user. Writes intentionally denied
+-- until a dedicated admin-management flow is modelled.
 create policy "products: authenticated read" on public.products
   for select to authenticated using (true);
 

@@ -15,6 +15,8 @@ import { HomeDashboardPage } from './routes/home-dashboard-page.js';
 import { ProfilePage } from './routes/profile-page.js';
 import { HomeDetailPage } from './routes/home-detail-page.js';
 import { RoomDetailPage } from './routes/room-detail-page.js';
+import { CleaningItemsPage } from './routes/cleaning-items-page.js';
+import { SettingsPage } from './routes/settings-page.js';
 
 export interface RouterContext {
   auth: AuthState;
@@ -78,6 +80,18 @@ const profileRoute = createRoute({
   component: ProfilePage,
 });
 
+const cleaningItemsRoute = createRoute({
+  getParentRoute: () => authLayoutRoute,
+  path: '/items',
+  component: CleaningItemsPage,
+});
+
+const settingsRoute = createRoute({
+  getParentRoute: () => authLayoutRoute,
+  path: '/settings',
+  component: SettingsPage,
+});
+
 const homeDetailRoute = createRoute({
   getParentRoute: () => authLayoutRoute,
   path: '/homes/$homeId',
@@ -92,7 +106,14 @@ const roomDetailRoute = createRoute({
 
 const routeTree = rootRoute.addChildren([
   publicLayoutRoute.addChildren([signInRoute, signUpRoute]),
-  authLayoutRoute.addChildren([dashboardRoute, profileRoute, homeDetailRoute, roomDetailRoute]),
+  authLayoutRoute.addChildren([
+    dashboardRoute,
+    profileRoute,
+    cleaningItemsRoute,
+    settingsRoute,
+    homeDetailRoute,
+    roomDetailRoute,
+  ]),
 ]);
 
 export const router = createRouter({

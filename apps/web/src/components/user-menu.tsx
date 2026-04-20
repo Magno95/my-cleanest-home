@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { LogOut, User } from 'lucide-react';
+import { LogOut, Settings2, User } from 'lucide-react';
 import * as Avatar from '@radix-ui/react-avatar';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { useNavigate } from '@tanstack/react-router';
@@ -82,6 +82,20 @@ export function UserMenu() {
           >
             <User size={16} aria-hidden />
             Profile
+          </DropdownMenu.Item>
+
+          <DropdownMenu.Item
+            onSelect={(e) => {
+              e.preventDefault();
+              void navigate({ to: '/settings' });
+            }}
+            className={cn(
+              'flex cursor-pointer items-center gap-2 rounded px-3 py-2 text-sm text-foreground',
+              'data-[highlighted]:bg-surface-muted data-[highlighted]:outline-none',
+            )}
+          >
+            <Settings2 size={16} aria-hidden />
+            Settings
           </DropdownMenu.Item>
 
           <DropdownMenu.Item

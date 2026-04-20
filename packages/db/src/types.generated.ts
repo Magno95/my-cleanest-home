@@ -123,118 +123,43 @@ export type Database = {
         };
         Relationships: [];
       };
-      instruction_products: {
-        Row: {
-          instruction_id: string;
-          product_id: string;
-        };
-        Insert: {
-          instruction_id: string;
-          product_id: string;
-        };
-        Update: {
-          instruction_id?: string;
-          product_id?: string;
-        };
-        Relationships: [
-          {
-            foreignKeyName: 'instruction_products_instruction_id_fkey';
-            columns: ['instruction_id'];
-            isOneToOne: false;
-            referencedRelation: 'instructions';
-            referencedColumns: ['id'];
-          },
-          {
-            foreignKeyName: 'instruction_products_product_id_fkey';
-            columns: ['product_id'];
-            isOneToOne: false;
-            referencedRelation: 'products';
-            referencedColumns: ['id'];
-          },
-        ];
-      };
-      instruction_tools: {
-        Row: {
-          instruction_id: string;
-          tool_id: string;
-        };
-        Insert: {
-          instruction_id: string;
-          tool_id: string;
-        };
-        Update: {
-          instruction_id?: string;
-          tool_id?: string;
-        };
-        Relationships: [
-          {
-            foreignKeyName: 'instruction_tools_instruction_id_fkey';
-            columns: ['instruction_id'];
-            isOneToOne: false;
-            referencedRelation: 'instructions';
-            referencedColumns: ['id'];
-          },
-          {
-            foreignKeyName: 'instruction_tools_tool_id_fkey';
-            columns: ['tool_id'];
-            isOneToOne: false;
-            referencedRelation: 'tools';
-            referencedColumns: ['id'];
-          },
-        ];
-      };
-      instructions: {
-        Row: {
-          body: string;
-          created_at: string;
-          id: string;
-          title: string;
-          updated_at: string;
-        };
-        Insert: {
-          body?: string;
-          created_at?: string;
-          id?: string;
-          title: string;
-          updated_at?: string;
-        };
-        Update: {
-          body?: string;
-          created_at?: string;
-          id?: string;
-          title?: string;
-          updated_at?: string;
-        };
-        Relationships: [];
-      };
       items: {
         Row: {
           area_id: string | null;
+          cleaning_method: string | null;
+          cleaning_products: string[];
+          cleaning_tools: string[];
           created_at: string;
           home_id: string;
           id: string;
-          instruction_id: string | null;
           name: string;
+          reference_photo_path: string | null;
           room_id: string | null;
           updated_at: string;
         };
         Insert: {
           area_id?: string | null;
+          cleaning_method?: string | null;
+          cleaning_products?: string[];
+          cleaning_tools?: string[];
           created_at?: string;
           home_id: string;
           id?: string;
-          instruction_id?: string | null;
           name: string;
+          reference_photo_path?: string | null;
           room_id?: string | null;
           updated_at?: string;
         };
         Update: {
           area_id?: string | null;
+          cleaning_method?: string | null;
+          cleaning_products?: string[];
+          cleaning_tools?: string[];
           created_at?: string;
           home_id?: string;
           id?: string;
-          instruction_id?: string | null;
           name?: string;
+          reference_photo_path?: string | null;
           room_id?: string | null;
           updated_at?: string;
         };
@@ -251,13 +176,6 @@ export type Database = {
             columns: ['home_id'];
             isOneToOne: false;
             referencedRelation: 'homes';
-            referencedColumns: ['id'];
-          },
-          {
-            foreignKeyName: 'items_instruction_id_fkey';
-            columns: ['instruction_id'];
-            isOneToOne: false;
-            referencedRelation: 'instructions';
             referencedColumns: ['id'];
           },
           {
@@ -298,6 +216,7 @@ export type Database = {
       };
       rooms: {
         Row: {
+          color_key: string | null;
           created_at: string;
           home_id: string;
           id: string;
@@ -305,6 +224,7 @@ export type Database = {
           updated_at: string;
         };
         Insert: {
+          color_key?: string | null;
           created_at?: string;
           home_id: string;
           id?: string;
@@ -312,6 +232,7 @@ export type Database = {
           updated_at?: string;
         };
         Update: {
+          color_key?: string | null;
           created_at?: string;
           home_id?: string;
           id?: string;

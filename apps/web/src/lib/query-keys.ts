@@ -15,13 +15,18 @@ export const queryKeys = {
     listByHome: (homeId: string) => [...queryKeys.rooms.all, 'by-home', homeId] as const,
     detail: (id: string) => [...queryKeys.rooms.all, 'detail', id] as const,
   },
-  areas: {
-    all: ['areas'] as const,
-    listByRoom: (roomId: string) => [...queryKeys.areas.all, 'by-room', roomId] as const,
-  },
   items: {
     all: ['items'] as const,
     listByHome: (homeId: string) => [...queryKeys.items.all, 'by-home', homeId] as const,
+    detail: (itemId: string) => [...queryKeys.items.all, 'detail', itemId] as const,
+  },
+  referenceData: {
+    all: ['reference-data'] as const,
+  },
+  tasks: {
+    all: ['tasks'] as const,
+    weekByHome: (homeId: string, weekKey: string, itemIds: string[]) =>
+      [...queryKeys.tasks.all, 'week', homeId, weekKey, itemIds] as const,
   },
   profile: {
     all: ['user-profile'] as const,

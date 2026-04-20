@@ -20,7 +20,7 @@ interface MiniCalendarProps {
   onSelect: (date: Date) => void;
 }
 
-const WEEKDAYS = ['S', 'M', 'T', 'W', 'T', 'F', 'S'] as const;
+const WEEKDAYS = ['M', 'T', 'W', 'T', 'F', 'S', 'S'] as const;
 
 /**
  * Airbnb-style compact month grid. Highlights the whole current week (the
@@ -30,8 +30,8 @@ export function MiniCalendar({ selectedDate, onSelect }: MiniCalendarProps) {
   const [visibleMonth, setVisibleMonth] = useState(() => startOfMonth(selectedDate));
 
   const days = useMemo(() => {
-    const gridStart = startOfWeek(startOfMonth(visibleMonth), { weekStartsOn: 0 });
-    const gridEnd = endOfWeek(endOfMonth(visibleMonth), { weekStartsOn: 0 });
+    const gridStart = startOfWeek(startOfMonth(visibleMonth), { weekStartsOn: 1 });
+    const gridEnd = endOfWeek(endOfMonth(visibleMonth), { weekStartsOn: 1 });
     return eachDayOfInterval({ start: gridStart, end: gridEnd });
   }, [visibleMonth]);
 

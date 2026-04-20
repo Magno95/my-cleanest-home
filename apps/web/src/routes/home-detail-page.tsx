@@ -9,7 +9,7 @@ export function HomeDetailPage() {
   const { data: home, isLoading, isError, error } = useHome(homeId);
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="mx-auto flex w-full max-w-5xl flex-col gap-8">
       <Breadcrumbs items={[{ label: 'Homes', to: '/' }, { label: home?.name ?? 'Home' }]} />
 
       {isLoading ? (
@@ -30,7 +30,7 @@ export function HomeDetailPage() {
           <header className="flex flex-col gap-2">
             <h1 className="text-2xl font-bold tracking-tighter text-foreground">{home.name}</h1>
             <p className="text-sm text-foreground-muted">
-              Manage the rooms, areas and cleaning tasks for this home.
+              Manage the rooms and cleaning tasks for this home.
             </p>
           </header>
 

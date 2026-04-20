@@ -1,7 +1,7 @@
 /**
  * Shared Tailwind preset (Airbnb-inspired).
  *
- * Consumed by `apps/web` and `apps/cms`:
+ * Consumed by frontend apps such as `apps/web`:
  *   presets: [require('@mch/ui/tailwind-preset')]
  *
  * Tokens come from CSS variables declared in `@mch/ui/styles.css`. Colours
