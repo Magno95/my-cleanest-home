@@ -16,6 +16,10 @@ begin
 end;
 $$;
 
+-- Create the unique index before the backfill loop so unique_violation can fire
+-- during collision retries, making the loop safe in incremental environments.
+create unique index homes_join_code_key on public.homes(join_code);
+
 do $$
 declare
   home_row record;
@@ -37,10 +41,9 @@ begin
   end loop;
 end $$;
 
+-- Set NOT NULL only after every existing row has a join_code.
 alter table public.homes
   alter column join_code set not null;
-
-create unique index homes_join_code_key on public.homes(join_code);
 
 create or replace function public.create_home(name text)
 returns uuid
@@ -52,10 +55,19 @@ declare
   trimmed_name text;
   new_home_id uuid;
   candidate_code text;
+  current_user_id uuid;
 begin
+  current_user_id := auth.uid();
+  if current_user_id is null then
+    raise exception 'Must be authenticated';
+  end if;
+
   trimmed_name := trim(name);
   if trimmed_name is null or trimmed_name = '' then
     raise exception 'Home name cannot be empty';
+  end if;
+  if length(trimmed_name) > 120 then
+    raise exception 'Home name too long (max 120 chars)';
   end if;
 
   loop
