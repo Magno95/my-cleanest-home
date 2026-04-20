@@ -27,8 +27,6 @@ begin
   insert into public.homes (name)
     values (trimmed_name)
     returning id into new_home_id;
-  insert into public.home_members (home_id, user_id, role)
-    values (new_home_id, current_user_id, 'owner');
   return new_home_id;
 end;
 $$;
