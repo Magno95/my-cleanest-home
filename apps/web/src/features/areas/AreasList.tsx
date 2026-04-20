@@ -3,8 +3,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { format } from 'date-fns';
 import { z } from 'zod';
-import { DoorOpen, Plus } from 'lucide-react';
-import { Link } from '@tanstack/react-router';
+import { LayoutGrid, Plus } from 'lucide-react';
 import { toast } from 'sonner';
 import {
   Button,
@@ -17,23 +16,23 @@ import {
   Spinner,
 } from '@mch/ui';
 import { Field } from '../../components/field.js';
-import { useRooms, type RoomSummary } from './use-rooms.js';
-import { useCreateRoom } from './use-create-room.js';
+import { useAreas, type AreaSummary } from './use-areas.js';
+import { useCreateArea } from './use-create-area.js';
 
-const createRoomSchema = z.object({
+const createAreaSchema = z.object({
   name: z.string().trim().min(1, 'Name is required').max(120, 'Must be at most 120 characters'),
 });
 
-type CreateRoomValues = z.infer<typeof createRoomSchema>;
+type CreateAreaValues = z.infer<typeof createAreaSchema>;
 
-export function RoomsList({ homeId }: { homeId: string }) {
-  const { data: rooms, isLoading, isError, error } = useRooms(homeId);
+export function AreasList({ roomId }: { roomId: string }) {
+  const { data: areas, isLoading, isError, error } = useAreas(roomId);
   const [showCreate, setShowCreate] = useState(false);
 
   if (isLoading) {
     return (
       <div className="flex h-48 items-center justify-center">
-        <Spinner size={28} label="Loading rooms" />
+        <Spinner size={28} label="Loading areas" />
       </div>
     );
   }
@@ -44,41 +43,41 @@ export function RoomsList({ homeId }: { homeId: string }) {
         <CardHeader>
           <CardTitle>Something went wrong</CardTitle>
           <CardDescription>
-            {error instanceof Error ? error.message : 'Unable to load rooms.'}
+            {error instanceof Error ? error.message : 'Unable to load areas.'}
           </CardDescription>
         </CardHeader>
       </Card>
     );
   }
 
-  const items = rooms ?? [];
+  const items = areas ?? [];
 
   return (
     <div className="flex flex-col gap-6">
       <header className="flex items-end justify-between gap-4">
         <div>
-          <h2 className="text-xl font-bold tracking-tight text-foreground">Rooms</h2>
+          <h2 className="text-xl font-bold tracking-tight text-foreground">Areas</h2>
           <p className="text-sm text-foreground-muted">
-            Add a room to start organising areas and tasks inside it.
+            Group items inside this room (e.g. &ldquo;Sink&rdquo;, &ldquo;Stovetop&rdquo;).
           </p>
         </div>
         {!showCreate ? (
           <Button variant="brand" onClick={() => setShowCreate(true)}>
             <Plus size={18} aria-hidden />
-            New room
+            New area
           </Button>
         ) : null}
       </header>
 
-      {showCreate ? <CreateRoomForm homeId={homeId} onDone={() => setShowCreate(false)} /> : null}
+      {showCreate ? <CreateAreaForm roomId={roomId} onDone={() => setShowCreate(false)} /> : null}
 
       {items.length === 0 && !showCreate ? (
         <EmptyState onCreate={() => setShowCreate(true)} />
       ) : (
         <ul className="grid gap-4 sm:grid-cols-2">
-          {items.map((room) => (
-            <li key={room.id}>
-              <RoomCard room={room} />
+          {items.map((area) => (
+            <li key={area.id}>
+              <AreaCard area={area} />
             </li>
           ))}
         </ul>
@@ -87,21 +86,20 @@ export function RoomsList({ homeId }: { homeId: string }) {
   );
 }
 
-function RoomCard({ room }: { room: RoomSummary }) {
+function AreaCard({ area }: { area: AreaSummary }) {
   return (
     <Card className="flex h-full flex-col">
       <CardHeader>
         <div className="flex h-10 w-10 items-center justify-center rounded-full bg-surface-muted text-foreground">
-          <DoorOpen size={18} aria-hidden />
+          <LayoutGrid size={18} aria-hidden />
         </div>
-        <CardTitle>{room.name}</CardTitle>
-        <CardDescription>Added {format(new Date(room.createdAt), 'MMM d, yyyy')}</CardDescription>
+        <CardTitle>{area.name}</CardTitle>
+        <CardDescription>Added {format(new Date(area.createdAt), 'MMM d, yyyy')}</CardDescription>
       </CardHeader>
       <CardContent>
-        <Button asChild variant="outline">
-          <Link to="/homes/$homeId/rooms/$roomId" params={{ homeId: room.homeId, roomId: room.id }}>
-            Open
-          </Link>
+        {/* Area detail (items) arrives in the next slice. */}
+        <Button variant="outline" disabled>
+          Open
         </Button>
       </CardContent>
     </Card>
@@ -113,60 +111,60 @@ function EmptyState({ onCreate }: { onCreate: () => void }) {
     <Card className="border border-dashed border-border-strong shadow-none">
       <CardContent className="items-center gap-4 py-12 text-center">
         <div className="flex h-14 w-14 items-center justify-center rounded-full bg-surface-muted text-foreground">
-          <DoorOpen size={22} aria-hidden />
+          <LayoutGrid size={22} aria-hidden />
         </div>
         <div className="flex flex-col gap-1">
-          <CardTitle>No rooms yet</CardTitle>
+          <CardTitle>No areas yet</CardTitle>
           <CardDescription>
-            Add your first room to start tracking areas and cleaning tasks.
+            Split this room into smaller areas so you can track items and cleaning tasks.
           </CardDescription>
         </div>
         <Button variant="brand" onClick={onCreate}>
           <Plus size={18} aria-hidden />
-          Create your first room
+          Create your first area
         </Button>
       </CardContent>
     </Card>
   );
 }
 
-function CreateRoomForm({ homeId, onDone }: { homeId: string; onDone: () => void }) {
-  const createRoom = useCreateRoom(homeId);
+function CreateAreaForm({ roomId, onDone }: { roomId: string; onDone: () => void }) {
+  const createArea = useCreateArea(roomId);
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors, isSubmitting },
-  } = useForm<CreateRoomValues>({
-    resolver: zodResolver(createRoomSchema),
+  } = useForm<CreateAreaValues>({
+    resolver: zodResolver(createAreaSchema),
     defaultValues: { name: '' },
   });
 
   const onSubmit = handleSubmit(async (values) => {
     try {
-      await createRoom.mutateAsync(values);
+      await createArea.mutateAsync(values);
       toast.success(`"${values.name}" created`);
       reset();
       onDone();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Failed to create room');
+      toast.error(err instanceof Error ? err.message : 'Failed to create area');
     }
   });
 
-  const busy = createRoom.isPending || isSubmitting;
+  const busy = createArea.isPending || isSubmitting;
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Create a new room</CardTitle>
-        <CardDescription>Rooms group areas and cleaning tasks inside a home.</CardDescription>
+        <CardTitle>Create a new area</CardTitle>
+        <CardDescription>Areas sit inside a room and hold the items you clean.</CardDescription>
       </CardHeader>
       <CardContent>
         <form className="flex flex-col gap-4" onSubmit={onSubmit} noValidate>
-          <Field id="room-name" label="Name" error={errors.name?.message}>
+          <Field id="area-name" label="Name" error={errors.name?.message}>
             <Input
-              id="room-name"
-              placeholder="e.g. Kitchen"
+              id="area-name"
+              placeholder="e.g. Sink"
               autoFocus
               aria-invalid={errors.name ? 'true' : 'false'}
               {...register('name')}
@@ -177,7 +175,7 @@ function CreateRoomForm({ homeId, onDone }: { homeId: string; onDone: () => void
               Cancel
             </Button>
             <Button type="submit" variant="brand" disabled={busy}>
-              {busy ? 'Creating…' : 'Create room'}
+              {busy ? 'Creating…' : 'Create area'}
             </Button>
           </div>
         </form>

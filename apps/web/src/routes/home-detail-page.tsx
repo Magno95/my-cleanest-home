@@ -1,6 +1,6 @@
 import { Link, useParams } from '@tanstack/react-router';
-import { ChevronLeft } from 'lucide-react';
 import { Button, Card, CardDescription, CardHeader, CardTitle, Spinner } from '@mch/ui';
+import { Breadcrumbs } from '../components/breadcrumbs.js';
 import { useHome } from '../features/homes/use-home.js';
 import { RoomsList } from '../features/rooms/RoomsList.js';
 
@@ -10,15 +10,7 @@ export function HomeDetailPage() {
 
   return (
     <div className="flex flex-col gap-8">
-      <div>
-        <Link
-          to="/"
-          className="inline-flex items-center gap-1 text-sm text-foreground-muted underline-offset-4 hover:text-foreground hover:underline"
-        >
-          <ChevronLeft size={16} aria-hidden />
-          All homes
-        </Link>
-      </div>
+      <Breadcrumbs items={[{ label: 'Homes', to: '/' }, { label: home?.name ?? 'Home' }]} />
 
       {isLoading ? (
         <div className="flex h-48 items-center justify-center">
@@ -46,7 +38,6 @@ export function HomeDetailPage() {
         </>
       )}
 
-      {/* Back button for error state */}
       {isError ? (
         <div>
           <Button asChild variant="outline">

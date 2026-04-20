@@ -13,6 +13,7 @@ import { SignInPage } from './routes/sign-in-page.js';
 import { SignUpPage } from './routes/sign-up-page.js';
 import { HomesPage } from './routes/homes-page.js';
 import { HomeDetailPage } from './routes/home-detail-page.js';
+import { RoomDetailPage } from './routes/room-detail-page.js';
 
 export interface RouterContext {
   auth: AuthState;
@@ -76,9 +77,15 @@ const homeDetailRoute = createRoute({
   component: HomeDetailPage,
 });
 
+const roomDetailRoute = createRoute({
+  getParentRoute: () => authLayoutRoute,
+  path: '/homes/$homeId/rooms/$roomId',
+  component: RoomDetailPage,
+});
+
 const routeTree = rootRoute.addChildren([
   publicLayoutRoute.addChildren([signInRoute, signUpRoute]),
-  authLayoutRoute.addChildren([homesRoute, homeDetailRoute]),
+  authLayoutRoute.addChildren([homesRoute, homeDetailRoute, roomDetailRoute]),
 ]);
 
 export const router = createRouter({
