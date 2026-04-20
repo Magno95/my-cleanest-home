@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { LogOut } from 'lucide-react';
+import { LogOut, User } from 'lucide-react';
 import * as Avatar from '@radix-ui/react-avatar';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
+import { useNavigate } from '@tanstack/react-router';
 import { toast } from 'sonner';
 import { cn } from '@mch/ui';
 import { signOut, useAuth } from '../lib/auth.js';
@@ -17,6 +18,7 @@ function initialsFrom(email: string): string {
 
 export function UserMenu() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [isPending, setIsPending] = useState(false);
 
   if (!user) return null;
@@ -67,6 +69,20 @@ export function UserMenu() {
           </div>
 
           <DropdownMenu.Separator className="my-1 h-px bg-border" />
+
+          <DropdownMenu.Item
+            onSelect={(e) => {
+              e.preventDefault();
+              void navigate({ to: '/profile' });
+            }}
+            className={cn(
+              'flex cursor-pointer items-center gap-2 rounded px-3 py-2 text-sm text-foreground',
+              'data-[highlighted]:bg-surface-muted data-[highlighted]:outline-none',
+            )}
+          >
+            <User size={16} aria-hidden />
+            Profile
+          </DropdownMenu.Item>
 
           <DropdownMenu.Item
             onSelect={(e) => {

@@ -11,7 +11,8 @@ import { AppShell } from './components/app-shell.js';
 import { PublicLayout } from './routes/public-layout.js';
 import { SignInPage } from './routes/sign-in-page.js';
 import { SignUpPage } from './routes/sign-up-page.js';
-import { HomesPage } from './routes/homes-page.js';
+import { HomeDashboardPage } from './routes/home-dashboard-page.js';
+import { ProfilePage } from './routes/profile-page.js';
 import { HomeDetailPage } from './routes/home-detail-page.js';
 import { RoomDetailPage } from './routes/room-detail-page.js';
 
@@ -65,10 +66,16 @@ const authLayoutRoute = createRoute({
   },
 });
 
-const homesRoute = createRoute({
+const dashboardRoute = createRoute({
   getParentRoute: () => authLayoutRoute,
   path: '/',
-  component: HomesPage,
+  component: HomeDashboardPage,
+});
+
+const profileRoute = createRoute({
+  getParentRoute: () => authLayoutRoute,
+  path: '/profile',
+  component: ProfilePage,
 });
 
 const homeDetailRoute = createRoute({
@@ -85,7 +92,7 @@ const roomDetailRoute = createRoute({
 
 const routeTree = rootRoute.addChildren([
   publicLayoutRoute.addChildren([signInRoute, signUpRoute]),
-  authLayoutRoute.addChildren([homesRoute, homeDetailRoute, roomDetailRoute]),
+  authLayoutRoute.addChildren([dashboardRoute, profileRoute, homeDetailRoute, roomDetailRoute]),
 ]);
 
 export const router = createRouter({
