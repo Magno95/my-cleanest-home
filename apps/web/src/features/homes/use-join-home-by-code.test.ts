@@ -17,4 +17,14 @@ describe('joinHomeByCode', () => {
       code: 'MCH-7K4P9Q',
     });
   });
+
+  it('normalizes the code by trimming whitespace and uppercasing before calling the RPC', async () => {
+    vi.mocked(supabase.rpc).mockResolvedValue({ data: 'home-123', error: null });
+
+    await expect(joinHomeByCode({ code: '  mch-7k4p9q  ' })).resolves.toBe('home-123');
+
+    expect(supabase.rpc).toHaveBeenCalledWith('join_home_by_code', {
+      code: 'MCH-7K4P9Q',
+    });
+  });
 });
