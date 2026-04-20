@@ -1,7 +1,5 @@
 # AGENTS.md
 
-> Status: **greenfield**. Repo is currently empty; nothing is scaffolded yet. This file describes the intended setup so agents don't make incompatible choices. Update it (delete this banner) once code lands and commands are verified.
-
 ## Product
 
 Web app to manage household cleaning: map rooms/items, set cleaning frequencies, view a calendar of due tasks, mark tasks done to restart their cycle, and store cleaning notes, tools, products, and methods directly in the main frontend. Multi-home, multi-user with task assignment.
@@ -46,6 +44,14 @@ Run from repo root unless noted. All orchestration goes through Turbo.
 - `pnpm --filter @mch/web e2e` — Playwright (requires dev server + Supabase running)
 
 Order when validating a change: **lint → typecheck → test**. Do not skip typecheck; shared types cross package boundaries and tsc is the first to catch breaks.
+
+## Deployment
+
+- Frontend (`apps/web`) deploys to Netlify.
+- Supabase remains the managed backend for auth, database, and storage.
+- `apps/api` is not part of the production deployment until it owns real server-side responsibilities (e.g. webhooks, scheduled jobs, privileged server-only integrations, or admin workflows that should not run from the client).
+- Netlify should build from the repo root and publish `apps/web/dist`.
+- SPA routing requires a catch-all redirect to `index.html` for deep links.
 
 ## Supabase specifics
 
