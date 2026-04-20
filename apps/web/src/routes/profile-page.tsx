@@ -21,13 +21,20 @@ import { Field } from '../components/field.js';
 import { useAuth } from '../lib/auth.js';
 import { useHomes, type HomeSummary } from '../features/homes/use-homes.js';
 import { useCreateHome } from '../features/homes/use-create-home.js';
+import { useJoinHomeByCode } from '../features/homes/use-join-home-by-code.js';
 import { useActiveHome } from '../features/active-home/use-active-home.js';
 import { useSetActiveHome } from '../features/profile/use-set-active-home.js';
+import { HomeCodeDisplay } from '../features/homes/home-code-display.js';
 
 const createHomeSchema = z.object({
   name: z.string().trim().min(1, 'Name is required').max(120, 'Must be at most 120 characters'),
 });
 type CreateHomeValues = z.infer<typeof createHomeSchema>;
+
+const joinHomeSchema = z.object({
+  code: z.string().trim().min(1, 'Home code is required'),
+});
+type JoinHomeValues = z.infer<typeof joinHomeSchema>;
 
 /**
  * Account + multi-home management. The currently active home is highlighted;
@@ -38,6 +45,7 @@ export function ProfilePage() {
   const { home: activeHome } = useActiveHome();
   const { data: homes, isLoading, isError, error } = useHomes();
   const [showCreate, setShowCreate] = useState(false);
+  const [panelMode, setPanelMode] = useState<'create' | 'join'>('create');
 
   return (
     <div className="mx-auto flex w-full max-w-5xl flex-col gap-8">
@@ -65,7 +73,37 @@ export function ProfilePage() {
           ) : null}
         </header>
 
-        {showCreate ? <CreateHomeForm onDone={() => setShowCreate(false)} /> : null}
+        {showCreate ? (
+          <Card>
+            <CardHeader>
+              <CardTitle>Add a home</CardTitle>
+              <CardDescription>Create a new home or join one with a code.</CardDescription>
+            </CardHeader>
+            <CardContent className="flex flex-col gap-4">
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  variant={panelMode === 'create' ? 'brand' : 'outline'}
+                  onClick={() => setPanelMode('create')}
+                >
+                  Create new
+                </Button>
+                <Button
+                  type="button"
+                  variant={panelMode === 'join' ? 'brand' : 'outline'}
+                  onClick={() => setPanelMode('join')}
+                >
+                  Join with code
+                </Button>
+              </div>
+              {panelMode === 'create' ? (
+                <CreateHomeForm onDone={() => setShowCreate(false)} />
+              ) : (
+                <JoinHomeForm onDone={() => setShowCreate(false)} />
+              )}
+            </CardContent>
+          </Card>
+        ) : null}
 
         {isLoading ? (
           <div className="flex h-40 items-center justify-center">
@@ -122,6 +160,11 @@ function HomeRow({ home, isActive }: { home: HomeSummary; isActive: boolean }) {
     }
   };
 
+  const handleCopyCode = async () => {
+    await navigator.clipboard.writeText(home.joinCode);
+    toast.success('Home code copied');
+  };
+
   return (
     <Card
       className={cn(
@@ -144,21 +187,24 @@ function HomeRow({ home, isActive }: { home: HomeSummary; isActive: boolean }) {
         <CardTitle>{home.name}</CardTitle>
         <CardDescription>Added {format(new Date(home.createdAt), 'MMM d, yyyy')}</CardDescription>
       </CardHeader>
-      <CardContent className="flex-row gap-2">
-        {!isActive ? (
-          <Button variant="brand" size="sm" onClick={handleSwitch} disabled={setActive.isPending}>
-            {setActive.isPending ? 'Switching…' : 'Switch to this home'}
+      <CardContent className="flex flex-col gap-3">
+        <HomeCodeDisplay code={home.joinCode} onCopy={() => void handleCopyCode()} />
+        <div className="flex flex-row gap-2">
+          {!isActive ? (
+            <Button variant="brand" size="sm" onClick={handleSwitch} disabled={setActive.isPending}>
+              {setActive.isPending ? 'Switching…' : 'Switch to this home'}
+            </Button>
+          ) : (
+            <Button asChild variant="outline" size="sm">
+              <Link to="/">Open dashboard</Link>
+            </Button>
+          )}
+          <Button asChild variant="ghost" size="sm">
+            <Link to="/homes/$homeId" params={{ homeId: home.id }}>
+              Manage rooms
+            </Link>
           </Button>
-        ) : (
-          <Button asChild variant="outline" size="sm">
-            <Link to="/">Open dashboard</Link>
-          </Button>
-        )}
-        <Button asChild variant="ghost" size="sm">
-          <Link to="/homes/$homeId" params={{ homeId: home.id }}>
-            Manage rooms
-          </Link>
-        </Button>
+        </div>
       </CardContent>
     </Card>
   );
@@ -190,32 +236,76 @@ function CreateHomeForm({ onDone }: { onDone: () => void }) {
   const busy = createHome.isPending || isSubmitting;
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Create a new home</CardTitle>
-        <CardDescription>Each home has its own rooms, items and cleaning schedule.</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <form className="flex flex-col gap-4" onSubmit={onSubmit} noValidate>
-          <Field id="home-name-profile" label="Name" error={errors.name?.message}>
-            <Input
-              id="home-name-profile"
-              placeholder="e.g. Apartment, Parents' house"
-              autoFocus
-              aria-invalid={errors.name ? 'true' : 'false'}
-              {...register('name')}
-            />
-          </Field>
-          <div className="flex justify-end gap-2">
-            <Button type="button" variant="ghost" onClick={onDone} disabled={busy}>
-              Cancel
-            </Button>
-            <Button type="submit" variant="brand" disabled={busy}>
-              {busy ? 'Creating…' : 'Create home'}
-            </Button>
-          </div>
-        </form>
-      </CardContent>
-    </Card>
+    <form className="flex flex-col gap-4" onSubmit={onSubmit} noValidate>
+      <Field id="home-name-profile" label="Name" error={errors.name?.message}>
+        <Input
+          id="home-name-profile"
+          placeholder="e.g. Apartment, Parents' house"
+          autoFocus
+          aria-invalid={errors.name ? 'true' : 'false'}
+          {...register('name')}
+        />
+      </Field>
+      <div className="flex justify-end gap-2">
+        <Button type="button" variant="ghost" onClick={onDone} disabled={busy}>
+          Cancel
+        </Button>
+        <Button type="submit" variant="brand" disabled={busy}>
+          {busy ? 'Creating…' : 'Create home'}
+        </Button>
+      </div>
+    </form>
+  );
+}
+
+function JoinHomeForm({ onDone }: { onDone: () => void }) {
+  const joinHome = useJoinHomeByCode();
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<JoinHomeValues>({
+    resolver: zodResolver(joinHomeSchema),
+    defaultValues: { code: '' },
+  });
+
+  const onSubmit = handleSubmit(async (values) => {
+    try {
+      await joinHome.mutateAsync(values);
+      toast.success('Joined home successfully');
+      reset();
+      onDone();
+    } catch (err) {
+      const message =
+        err instanceof Error && err.message.includes('Home code not found')
+          ? 'Home code not found'
+          : 'Failed to join home';
+      toast.error(message);
+    }
+  });
+
+  const busy = joinHome.isPending || isSubmitting;
+
+  return (
+    <form className="flex flex-col gap-4" onSubmit={onSubmit} noValidate>
+      <Field id="home-code-profile" label="Home code" error={errors.code?.message}>
+        <Input
+          id="home-code-profile"
+          placeholder="e.g. MCH-7K4P9Q"
+          autoFocus
+          aria-invalid={errors.code ? 'true' : 'false'}
+          {...register('code')}
+        />
+      </Field>
+      <div className="flex justify-end gap-2">
+        <Button type="button" variant="ghost" onClick={onDone} disabled={busy}>
+          Cancel
+        </Button>
+        <Button type="submit" variant="brand" disabled={busy}>
+          {busy ? 'Joining…' : 'Join home'}
+        </Button>
+      </div>
+    </form>
   );
 }
