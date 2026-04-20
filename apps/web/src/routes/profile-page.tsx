@@ -47,6 +47,11 @@ export function ProfilePage() {
   const [showCreate, setShowCreate] = useState(false);
   const [panelMode, setPanelMode] = useState<'create' | 'join'>('create');
 
+  const closePanel = () => {
+    setShowCreate(false);
+    setPanelMode('create');
+  };
+
   return (
     <div className="mx-auto flex w-full max-w-5xl flex-col gap-8">
       <header className="flex flex-col gap-2">
@@ -97,9 +102,9 @@ export function ProfilePage() {
                 </Button>
               </div>
               {panelMode === 'create' ? (
-                <CreateHomeForm onDone={() => setShowCreate(false)} />
+                <CreateHomeForm onDone={closePanel} />
               ) : (
-                <JoinHomeForm onDone={() => setShowCreate(false)} />
+                <JoinHomeForm onDone={closePanel} />
               )}
             </CardContent>
           </Card>
@@ -161,8 +166,12 @@ function HomeRow({ home, isActive }: { home: HomeSummary; isActive: boolean }) {
   };
 
   const handleCopyCode = async () => {
-    await navigator.clipboard.writeText(home.joinCode);
-    toast.success('Home code copied');
+    try {
+      await navigator.clipboard.writeText(home.joinCode);
+      toast.success('Home code copied');
+    } catch {
+      toast.error('Could not copy code');
+    }
   };
 
   return (
