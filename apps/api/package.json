@@ -1,0 +1,33 @@
+{
+  "name": "@mch/api",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc -p tsconfig.build.json",
+    "start": "node dist/index.js",
+    "lint": "eslint src",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@mch/db": "workspace:*",
+    "@mch/shared": "workspace:*",
+    "cors": "^2.8.5",
+    "express": "^4.21.0",
+    "jose": "^5.9.3",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.7.0",
+    "@types/supertest": "^6.0.2",
+    "supertest": "^7.0.0",
+    "tsx": "^4.19.1",
+    "typescript": "^5.6.2",
+    "vitest": "^2.1.1"
+  }
+}

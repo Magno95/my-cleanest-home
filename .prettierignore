@@ -1,0 +1,8 @@
+node_modules
+dist
+build
+coverage
+.turbo
+.vite
+pnpm-lock.yaml
+**/supabase/types.generated.ts
