@@ -1,5 +1,4 @@
 import { vi, describe, it, expect } from 'vitest';
-import { createHome } from './use-create-home.ts';
 
 vi.mock('../../lib/supabase.js', () => ({
   supabase: { rpc: vi.fn() },
@@ -13,8 +12,10 @@ import { ensureMiscellaneousRoom } from '../rooms/miscellaneous-room.js';
 
 describe('createHome', () => {
   it('calls supabase.rpc and ensureMiscellaneousRoom', async () => {
+    const { createHome } = await import('./use-create-home.js');
+
     vi.mocked(supabase.rpc).mockResolvedValue({ data: 'home-123', error: null });
-    vi.mocked(ensureMiscellaneousRoom).mockResolvedValue(undefined);
+    vi.mocked(ensureMiscellaneousRoom).mockResolvedValue('room-123');
 
     await createHome({ name: 'Apartment' });
 
