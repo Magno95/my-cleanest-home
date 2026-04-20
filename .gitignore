@@ -29,10 +29,10 @@ Thumbs.db
 .idea/
 *.swp
 
-# Supabase
-supabase/.branches
-supabase/.temp
-supabase/logs
+# Supabase (ephemeral CLI state under any supabase/ dir)
+**/supabase/.branches/
+**/supabase/.temp/
+**/supabase/logs/
 
 # TypeScript
 *.tsbuildinfo
