@@ -2,15 +2,74 @@
 @tailwind components;
 @tailwind utilities;
 
+/**
+ * Design tokens (Airbnb-inspired).
+ *
+ * Palette & treatments mirror the `design` skill: pure white canvas, Rausch
+ * Red accent, warm near-black text (#222), three-layer card shadow, generous
+ * radii, and Cereal VF with system fallbacks.
+ *
+ * Colours are stored as HSL triplets so Tailwind utilities can compose opacity:
+ *   class="bg-background/80"
+ *
+ * Shadows and radii are exposed as CSS variables so raw CSS can reuse them and
+ * the Tailwind preset can pull them through `var(--…)`.
+ */
+
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%;
-    --primary: 240 5.9% 10%;
-    --primary-foreground: 0 0% 98%;
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
-    --border: 240 5.9% 90%;
-    --radius: 0.5rem;
+    /* Surfaces */
+    --background: 0 0% 100%; /* #ffffff  pure white canvas */
+    --surface-muted: 0 0% 95%; /* #f2f2f2  light surface / circular nav */
+    --surface-elevated: 0 0% 100%; /* card background */
+
+    /* Text */
+    --foreground: 0 0% 13%; /* #222222  warm near-black */
+    --foreground-muted: 0 0% 42%; /* #6a6a6a  secondary */
+    --foreground-faint: 0 0% 57%; /* #929292  disabled links */
+
+    /* Borders & rings */
+    --border: 0 0% 92%; /* #ebebeb  visible divider */
+    --border-strong: 0 0% 76%; /* #c1c1c1  stronger card edge */
+    --ring: 0 0% 13%; /* focus ring matches foreground */
+
+    /* Brand (Rausch) */
+    --brand: 349 100% 61%; /* #ff385c  Rausch Red */
+    --brand-foreground: 0 0% 100%;
+    --brand-active: 346 91% 46%; /* #e00b41  Deep Rausch (pressed) */
+
+    /* Semantic */
+    --error: 13 80% 42%; /* #c13515 */
+    --error-foreground: 0 0% 100%;
+
+    /* Radii */
+    --radius-sm: 0.25rem; /*  4px */
+    --radius: 0.5rem; /*  8px  buttons */
+    --radius-md: 0.875rem; /* 14px  badges */
+    --radius-lg: 1.25rem; /* 20px  cards */
+    --radius-xl: 2rem; /* 32px  hero / large surfaces */
+
+    /* Three-layer card shadow (warm lift) */
+    --shadow-card:
+      rgba(0, 0, 0, 0.02) 0 0 0 1px, rgba(0, 0, 0, 0.04) 0 2px 6px, rgba(0, 0, 0, 0.1) 0 4px 8px;
+    --shadow-hover: rgba(0, 0, 0, 0.08) 0 4px 12px;
+
+    /* Typography */
+    --font-sans:
+      'Airbnb Cereal VF', 'Circular', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+      'Helvetica Neue', Arial, sans-serif;
+  }
+
+  html,
+  body {
+    height: 100%;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 }
