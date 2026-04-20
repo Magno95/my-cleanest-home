@@ -28,6 +28,7 @@ Thumbs.db
 .vscode/
 .idea/
 *.swp
+.worktrees/
 
 # Supabase (ephemeral CLI state under any supabase/ dir)
 **/supabase/.branches/
