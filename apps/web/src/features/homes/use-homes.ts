@@ -6,12 +6,13 @@ export interface HomeSummary {
   id: string;
   name: string;
   createdAt: string;
+  joinCode: string;
 }
 
 async function fetchHomes(): Promise<HomeSummary[]> {
   const { data, error } = await supabase
     .from('homes')
-    .select('id, name, created_at')
+    .select('id, name, join_code, created_at')
     .order('created_at', { ascending: false });
 
   if (error) throw error;
@@ -19,6 +20,7 @@ async function fetchHomes(): Promise<HomeSummary[]> {
     id: row.id,
     name: row.name,
     createdAt: row.created_at,
+    joinCode: row.join_code,
   }));
 }
 
