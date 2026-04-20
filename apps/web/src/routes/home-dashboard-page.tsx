@@ -9,6 +9,7 @@ import { useActiveHome } from '../features/active-home/use-active-home.js';
 import { useItems, type ItemSummary } from '../features/items/use-items.js';
 import { useRooms } from '../features/rooms/use-rooms.js';
 import { ItemDetailDialog } from '../features/items/ItemDetailDialog.js';
+import { LibraryPanel } from '../features/library/LibraryPanel.js';
 import { generateMockTasks } from '../features/tasks/mock-tasks.js';
 
 /**
@@ -23,6 +24,7 @@ export function HomeDashboardPage() {
 
   const [selectedDate, setSelectedDate] = useState(() => new Date());
   const [detailItem, setDetailItem] = useState<ItemSummary | null>(null);
+  const [libraryOpen, setLibraryOpen] = useState(false);
 
   const weekStart = useMemo(() => startOfWeek(selectedDate, { weekStartsOn: 1 }), [selectedDate]);
 
@@ -77,7 +79,7 @@ export function HomeDashboardPage() {
             </CardHeader>
           </Card>
 
-          <Button variant="brand" className="w-full" disabled>
+          <Button variant="brand" className="w-full" onClick={() => setLibraryOpen(true)}>
             <Plus size={16} aria-hidden />
             New cleaning item
           </Button>
@@ -139,6 +141,8 @@ export function HomeDashboardPage() {
         open={detailItem !== null}
         onOpenChange={(o) => (o ? null : setDetailItem(null))}
       />
+
+      <LibraryPanel home={home} open={libraryOpen} onOpenChange={setLibraryOpen} />
     </div>
   );
 }

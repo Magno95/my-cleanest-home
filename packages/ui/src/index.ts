@@ -22,3 +22,13 @@ export {
   DialogTitle,
   DialogDescription,
 } from './components/dialog.js';
+export {
+  Sheet,
+  SheetTrigger,
+  SheetClose,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetDescription,
+  type SheetContentProps,
+} from './components/sheet.js';
