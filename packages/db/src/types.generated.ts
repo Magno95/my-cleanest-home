@@ -209,27 +209,33 @@ export type Database = {
       };
       items: {
         Row: {
-          area_id: string;
+          area_id: string | null;
           created_at: string;
+          home_id: string;
           id: string;
           instruction_id: string | null;
           name: string;
+          room_id: string | null;
           updated_at: string;
         };
         Insert: {
-          area_id: string;
+          area_id?: string | null;
           created_at?: string;
+          home_id: string;
           id?: string;
           instruction_id?: string | null;
           name: string;
+          room_id?: string | null;
           updated_at?: string;
         };
         Update: {
-          area_id?: string;
+          area_id?: string | null;
           created_at?: string;
+          home_id?: string;
           id?: string;
           instruction_id?: string | null;
           name?: string;
+          room_id?: string | null;
           updated_at?: string;
         };
         Relationships: [
@@ -241,10 +247,24 @@ export type Database = {
             referencedColumns: ['id'];
           },
           {
+            foreignKeyName: 'items_home_id_fkey';
+            columns: ['home_id'];
+            isOneToOne: false;
+            referencedRelation: 'homes';
+            referencedColumns: ['id'];
+          },
+          {
             foreignKeyName: 'items_instruction_id_fkey';
             columns: ['instruction_id'];
             isOneToOne: false;
             referencedRelation: 'instructions';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'items_room_id_fkey';
+            columns: ['room_id'];
+            isOneToOne: false;
+            referencedRelation: 'rooms';
             referencedColumns: ['id'];
           },
         ];
@@ -375,6 +395,35 @@ export type Database = {
           updated_at?: string;
         };
         Relationships: [];
+      };
+      user_profiles: {
+        Row: {
+          active_home_id: string | null;
+          created_at: string;
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          active_home_id?: string | null;
+          created_at?: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          active_home_id?: string | null;
+          created_at?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'user_profiles_active_home_id_fkey';
+            columns: ['active_home_id'];
+            isOneToOne: false;
+            referencedRelation: 'homes';
+            referencedColumns: ['id'];
+          },
+        ];
       };
     };
     Views: {
