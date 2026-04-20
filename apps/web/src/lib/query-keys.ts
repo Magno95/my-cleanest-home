@@ -10,4 +10,8 @@ export const queryKeys = {
     list: () => [...queryKeys.homes.all, 'list'] as const,
     detail: (id: string) => [...queryKeys.homes.all, 'detail', id] as const,
   },
+  rooms: {
+    all: ['rooms'] as const,
+    listByHome: (homeId: string) => [...queryKeys.rooms.all, 'by-home', homeId] as const,
+  },
 } as const;
