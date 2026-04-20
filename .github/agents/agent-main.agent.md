@@ -13,7 +13,6 @@ Web app to manage household cleaning: map rooms/items, set cleaning frequencies,
 
 - **Monorepo**: pnpm workspaces + Turborepo
 - **Frontend (`apps/web`)**: React + Vite + TypeScript
-- **Backend (`apps/api`)**: Express + TypeScript
 - **DB / auth / storage**: Supabase (Postgres). Schema, migrations, and generated types live in `packages/db`.
 - **Shared code**: `packages/shared` (types, domain logic), `packages/ui` (React components shared across `web` and future frontend surfaces if needed)
 - **Testing**: Vitest (unit/integration), Playwright (e2e)
@@ -24,7 +23,6 @@ Web app to manage household cleaning: map rooms/items, set cleaning frequencies,
 ```
 apps/
   web/     # end-user React app
-  api/     # Express API
 packages/
   shared/  # cross-cutting types & domain utils
   ui/      # shared React components
@@ -55,7 +53,6 @@ Order when validating a change: **lint → typecheck → test**. Do not skip typ
 - Local dev expects the Supabase CLI (`supabase start`) running before `apps/api` or e2e tests.
 - Schema changes go through migrations in `packages/db/supabase/migrations/`. After migrating, regenerate types (`supabase gen types typescript ...`) and commit the output; do not hand-edit generated files.
 - Row-Level Security is expected for multi-home/multi-user isolation — when adding tables, add RLS policies in the same migration.
-- Auth is handled by Supabase; the Express API validates Supabase JWTs rather than issuing its own sessions.
 
 ## Conventions
 

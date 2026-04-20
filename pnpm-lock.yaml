@@ -182,7 +182,7 @@ importers:
         specifier: ^5.4.8
         version: 5.4.21(@types/node@22.19.17)
       vitest:
-        specifier: ^2.1.1
+        specifier: ^2.1.9
         version: 2.1.9(@types/node@22.19.17)
 
   packages/db:
