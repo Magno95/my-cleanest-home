@@ -8,6 +8,7 @@ import { queryKeys } from '../../lib/query-keys.js';
 import { useAuth } from '../../lib/auth.js';
 import { useUserProfile } from '../profile/use-user-profile.js';
 import { useHomes } from '../homes/use-homes.js';
+import { createHomeRecord } from '../homes/use-create-home.js';
 import { ensureMiscellaneousRoom } from '../rooms/miscellaneous-room.js';
 
 /**
@@ -151,13 +152,7 @@ export async function ensureDemoData(
   let homeId = activeHomeId ?? existingHomes?.[0]?.id ?? null;
 
   if (!homeId) {
-    const { data: home, error: homeErr } = await supabase
-      .from('homes')
-      .insert({ name: DEFAULT_HOME_NAME })
-      .select('id')
-      .single();
-    if (homeErr) throw homeErr;
-    homeId = home.id;
+    homeId = await createHomeRecord({ name: DEFAULT_HOME_NAME });
   }
 
   const { error: profileErr } = await supabase
