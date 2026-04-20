@@ -1,6 +1,7 @@
 import { Link, Outlet } from '@tanstack/react-router';
 import { Sparkles } from 'lucide-react';
 import { UserMenu } from './user-menu.js';
+import { useFirstRunBootstrap } from '../features/bootstrap/use-first-run-bootstrap.js';
 
 /**
  * Outer chrome for authenticated pages: sticky white header with brand mark
@@ -8,6 +9,9 @@ import { UserMenu } from './user-menu.js';
  * white canvas with generous vertical rhythm.
  */
 export function AppShell() {
+  // Seed default home/room/items for first-time users.
+  useFirstRunBootstrap();
+
   return (
     <div className="min-h-screen bg-background">
       <header className="sticky top-0 z-40 border-b border-border bg-background/90 backdrop-blur">
