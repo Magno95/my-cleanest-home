@@ -1,5 +1,5 @@
 import { vi, describe, it, expect } from 'vitest';
-import { createHome } from './use-create-home';
+import { createHome, createHomeRecord } from './use-create-home';
 
 vi.mock('../../lib/supabase.js', () => ({
   supabase: { rpc: vi.fn() },
@@ -20,5 +20,14 @@ describe('createHome', () => {
 
     expect(supabase.rpc).toHaveBeenCalledWith('create_home', { name: 'Apartment' });
     expect(ensureMiscellaneousRoom).toHaveBeenCalledWith('home-123');
+  });
+});
+
+describe('createHomeRecord', () => {
+  it('returns the created home id from createHomeRecord', async () => {
+    vi.mocked(supabase.rpc).mockResolvedValue({ data: 'home-123', error: null });
+
+    await expect(createHomeRecord({ name: 'Apartment' })).resolves.toBe('home-123');
+    expect(supabase.rpc).toHaveBeenCalledWith('create_home', { name: 'Apartment' });
   });
 });

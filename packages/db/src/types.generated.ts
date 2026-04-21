@@ -106,18 +106,21 @@ export type Database = {
         Row: {
           created_at: string;
           id: string;
+          join_code: string;
           name: string;
           updated_at: string;
         };
         Insert: {
           created_at?: string;
           id?: string;
+          join_code: string;
           name: string;
           updated_at?: string;
         };
         Update: {
           created_at?: string;
           id?: string;
+          join_code?: string;
           name?: string;
           updated_at?: string;
         };
@@ -353,8 +356,10 @@ export type Database = {
     Functions: {
       create_home: { Args: { name: string }; Returns: string };
       current_user_id: { Args: never; Returns: string };
+      generate_home_join_code: { Args: never; Returns: string };
       is_home_member: { Args: { target_home_id: string }; Returns: boolean };
       is_home_owner: { Args: { target_home_id: string }; Returns: boolean };
+      join_home_by_code: { Args: { code: string }; Returns: string };
     };
     Enums: {
       frequency_unit: 'day' | 'week' | 'month' | 'year';
