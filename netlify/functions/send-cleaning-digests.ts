@@ -7,7 +7,7 @@ export const config = {
   schedule: '0 7,8,19,20 * * *',
 };
 
-export default async function handler(): Promise<Response> {
+export async function handler(): Promise<Response> {
   const schedule = getCleaningDigestSchedule(new Date(), TIME_ZONE);
   if (!schedule) {
     return json({ skipped: true, reason: 'outside_digest_hour' });

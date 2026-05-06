@@ -3,7 +3,7 @@ import { json, runCleaningDigest } from './lib/cleaning-digests.js';
 
 const TIME_ZONE = 'Europe/Rome';
 
-export default async function handler(request: Request): Promise<Response> {
+export async function handler(request: Request): Promise<Response> {
   const authError = validateRequestSecret(request);
   if (authError) return authError;
 
