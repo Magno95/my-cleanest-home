@@ -7,6 +7,13 @@ settings:
 importers:
 
   .:
+    dependencies:
+      '@mch/shared':
+        specifier: workspace:^
+        version: link:packages/shared
+      '@supabase/supabase-js':
+        specifier: ^2.45.4
+        version: 2.103.3
     devDependencies:
       '@commitlint/cli':
         specifier: ^19.5.0

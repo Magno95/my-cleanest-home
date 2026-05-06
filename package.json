@@ -42,5 +42,9 @@
     "*.{json,md,yml,yaml,css}": [
       "prettier --write"
     ]
+  },
+  "dependencies": {
+    "@mch/shared": "workspace:^",
+    "@supabase/supabase-js": "^2.45.4"
   }
 }
