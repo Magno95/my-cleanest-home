@@ -134,9 +134,8 @@ async function uploadMockReferencePhoto(
 }
 
 /**
- * Ensures the user has one active demo-ready home. If the home already exists
- * but only has sparse legacy seed data, enrich it with more rooms/items,
- * details, cleaning cycles, and initial future tasks.
+ * Ensures the user has one active home. Demo rooms/items are inserted only
+ * during first setup, or when the user explicitly resets demo data.
  */
 export async function ensureDemoData(
   userId: string,
@@ -163,6 +162,8 @@ export async function ensureDemoData(
 
   await ensureMiscellaneousRoom(homeId);
 
+  const shouldSeedDemoItems = options?.reset === true || activeHomeId === null;
+
   if (options?.reset) {
     const { error: deleteItemsErr } = await supabase.from('items').delete().eq('home_id', homeId);
     if (deleteItemsErr) throw deleteItemsErr;
@@ -171,6 +172,10 @@ export async function ensureDemoData(
     if (deleteRoomsErr) throw deleteRoomsErr;
 
     await ensureMiscellaneousRoom(homeId);
+  }
+
+  if (!shouldSeedDemoItems) {
+    return homeId;
   }
 
   const { data: existingRooms, error: roomsErr } = await supabase
