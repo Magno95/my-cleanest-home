@@ -10,6 +10,12 @@ import {
 
 type JsonRecord = Record<string, unknown>;
 
+export interface NetlifyJsonResponse {
+  body: string;
+  headers: Record<string, string>;
+  statusCode: number;
+}
+
 type TaskRow = {
   id: string;
   cycle_id: string;
@@ -423,12 +429,12 @@ function readEnv(name: keyof FunctionEnv): string {
   return value;
 }
 
-export function json(body: JsonRecord, init?: ResponseInit): Response {
-  return new Response(JSON.stringify(body), {
-    ...init,
+export function json(body: JsonRecord, init?: { status?: number }): NetlifyJsonResponse {
+  return {
+    body: JSON.stringify(body),
     headers: {
       'Content-Type': 'application/json',
-      ...init?.headers,
     },
-  });
+    statusCode: init?.status ?? 200,
+  };
 }

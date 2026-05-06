@@ -1,5 +1,5 @@
 import { getCleaningDigestScheduleForKind, type CleaningDigestKind } from '@mch/shared';
-import { json, runCleaningDigest } from './lib/cleaning-digests.js';
+import { json, runCleaningDigest, type NetlifyJsonResponse } from './lib/cleaning-digests.js';
 
 const TIME_ZONE = 'Europe/Rome';
 
@@ -10,7 +10,7 @@ interface NetlifyEventLike {
   url?: string;
 }
 
-export async function handler(request: Request | NetlifyEventLike): Promise<Response> {
+export async function handler(request: Request | NetlifyEventLike): Promise<NetlifyJsonResponse> {
   const triggerRequest = normalizeTriggerRequest(request);
   const authError = validateRequestSecret(triggerRequest);
   if (authError) return authError;
@@ -67,7 +67,7 @@ function normalizeTriggerRequest(request: Request | NetlifyEventLike): TriggerRe
   };
 }
 
-function validateRequestSecret(request: TriggerRequest): Response | null {
+function validateRequestSecret(request: TriggerRequest): NetlifyJsonResponse | null {
   const expected = process.env.CLEANING_DIGEST_TRIGGER_SECRET;
   if (!expected) {
     return json(
