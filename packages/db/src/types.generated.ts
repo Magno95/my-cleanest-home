@@ -190,6 +190,48 @@ export type Database = {
           },
         ];
       };
+      notification_deliveries: {
+        Row: {
+          created_at: string;
+          digest_date: string;
+          digest_kind: Database['public']['Enums']['notification_digest_kind'];
+          error_message: string | null;
+          id: string;
+          provider_message_id: string | null;
+          recipient_email: string;
+          status: Database['public']['Enums']['notification_delivery_status'];
+          task_count: number;
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          digest_date: string;
+          digest_kind: Database['public']['Enums']['notification_digest_kind'];
+          error_message?: string | null;
+          id?: string;
+          provider_message_id?: string | null;
+          recipient_email: string;
+          status?: Database['public']['Enums']['notification_delivery_status'];
+          task_count: number;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          digest_date?: string;
+          digest_kind?: Database['public']['Enums']['notification_digest_kind'];
+          error_message?: string | null;
+          id?: string;
+          provider_message_id?: string | null;
+          recipient_email?: string;
+          status?: Database['public']['Enums']['notification_delivery_status'];
+          task_count?: number;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
       products: {
         Row: {
           brand: string | null;
@@ -364,6 +406,8 @@ export type Database = {
     Enums: {
       frequency_unit: 'day' | 'week' | 'month' | 'year';
       home_role: 'owner' | 'member';
+      notification_delivery_status: 'pending' | 'sent' | 'failed';
+      notification_digest_kind: 'morning' | 'evening';
       task_status: 'pending' | 'done' | 'skipped';
     };
     CompositeTypes: {
@@ -492,6 +536,8 @@ export const Constants = {
     Enums: {
       frequency_unit: ['day', 'week', 'month', 'year'],
       home_role: ['owner', 'member'],
+      notification_delivery_status: ['pending', 'sent', 'failed'],
+      notification_digest_kind: ['morning', 'evening'],
       task_status: ['pending', 'done', 'skipped'],
     },
   },
